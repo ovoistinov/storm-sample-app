@@ -6,4 +6,4 @@ public class SimpleSpoutTest {
 	public void testSomething() {
 		
 	}
-}
+} 

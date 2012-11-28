@@ -6,4 +6,4 @@ public class SimpleBoltTest {
 	public void testSomething() {
 		
 	}
-}
+} 

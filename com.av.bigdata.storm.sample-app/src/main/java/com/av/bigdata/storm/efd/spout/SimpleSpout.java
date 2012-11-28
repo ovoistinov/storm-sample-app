@@ -13,17 +13,17 @@ public class SimpleSpout extends BaseRichSpout {
 	public void open(Map conf, TopologyContext context,
 			SpoutOutputCollector collector) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void nextTuple() {
 		// TODO Auto-generated method stub
-		
-	}
+
+	} 
 
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

@@ -1,45 +1,58 @@
-package com.av.bigdata.batch.storm.sample.app.spout;
+package com.av.bigdata.storm.efd.spout;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
-import backtype.storm.utils.Utils;
+import backtype.storm.utils.InprocMessaging;
 
 public class EmailInfoFeederSpout extends BaseRichSpout  {
-    private static final long serialVersionUID = 6156995191920101152L;
     private SpoutOutputCollector collector;
-    private final String[] emailAddresses = new String[] {
-            "auser@domain.com", 
-            "buser@domain.com"
-    };
+    private int port;
     
+    public EmailInfoFeederSpout() {
+    	this.port = InprocMessaging.acquireNewPort();
+    }
+    
+    public void feed(List<Object> tuple) {
+    	InprocMessaging.sendMessage(port, tuple);
+    }
+    
+    @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
         this.collector = collector;
     }
 
+    @Override
     public void nextTuple() {
-        Utils.sleep(100);
-        
-        Random r = new Random();
-        String tupleValue = emailAddresses[r.nextInt(emailAddresses.length)];
-        collector.emit(new Values(tupleValue));
+    	List<Object> tuple = (List<Object>) InprocMessaging.pollMessage(port);
+    	if (tuple != null) {
+    		collector.emit(tuple);
+    		return;
+    	}
+    	
+    	try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+    	
     }
 
+    @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(getFields()));
     }
     
+    public int getPort() {
+    	return this.port;
+    }
+    
     private String[] getFields() {
-        return new String[]{
-                "email", 
-                "address", 
-                "action"
-        };
+        return new String[]{"email", "address", "action", "timestamp"}; // TODO put into field definition enum of class
     }
 }

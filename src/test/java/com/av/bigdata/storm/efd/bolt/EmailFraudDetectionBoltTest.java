@@ -24,16 +24,16 @@ public class EmailFraudDetectionBoltTest {
         BasicOutputCollector collector = mock(BasicOutputCollector.class);
 
         Tuple tuple1 = mock(Tuple.class);
-        when(tuple1.getStringByField(ActionInfoFields.EMAIL.name())).thenReturn("auser@domain.com");
-        when(tuple1.getStringByField(ActionInfoFields.IP.name())).thenReturn("100.100.100.100");
-        when(tuple1.getStringByField(ActionInfoFields.ACTION_TYPE.name())).thenReturn("login");
-        when(tuple1.getStringByField(ActionInfoFields.TIMESTAMP.name())).thenReturn("1354547679586");
+        when(tuple1.getStringByField(ActionInfoFields.EMAIL.fieldName())).thenReturn("auser@domain.com");
+        when(tuple1.getStringByField(ActionInfoFields.IP.fieldName())).thenReturn("100.100.100.100");
+        when(tuple1.getStringByField(ActionInfoFields.ACTION_TYPE.fieldName())).thenReturn("login");
+        when(tuple1.getStringByField(ActionInfoFields.TIMESTAMP.fieldName())).thenReturn("1354547679586");
 
         Tuple tuple2 = mock(Tuple.class);
-        when(tuple2.getStringByField(ActionInfoFields.EMAIL.name())).thenReturn("auser@domain.com");
-        when(tuple2.getStringByField(ActionInfoFields.IP.name())).thenReturn("101.101.100.100");
-        when(tuple2.getStringByField(ActionInfoFields.ACTION_TYPE.name())).thenReturn("login");
-        when(tuple2.getStringByField(ActionInfoFields.TIMESTAMP.name())).thenReturn("1354547689586");
+        when(tuple2.getStringByField(ActionInfoFields.EMAIL.fieldName())).thenReturn("auser@domain.com");
+        when(tuple2.getStringByField(ActionInfoFields.IP.fieldName())).thenReturn("101.101.100.100");
+        when(tuple2.getStringByField(ActionInfoFields.ACTION_TYPE.fieldName())).thenReturn("login");
+        when(tuple2.getStringByField(ActionInfoFields.TIMESTAMP.fieldName())).thenReturn("1354547689586");
 
         bolt.execute(tuple1, collector);
         bolt.execute(tuple2, collector);
@@ -48,16 +48,16 @@ public class EmailFraudDetectionBoltTest {
         BasicOutputCollector collector = mock(BasicOutputCollector.class);
 
         Tuple tuple1 = mock(Tuple.class);
-        when(tuple1.getStringByField(ActionInfoFields.EMAIL.name())).thenReturn("auser@domain.com");
-        when(tuple1.getStringByField(ActionInfoFields.IP.name())).thenReturn("100.100.100.100");
-        when(tuple1.getStringByField(ActionInfoFields.ACTION_TYPE.name())).thenReturn("login");
-        when(tuple1.getStringByField(ActionInfoFields.TIMESTAMP.name())).thenReturn("1354547679586");
+        when(tuple1.getStringByField(ActionInfoFields.EMAIL.fieldName())).thenReturn("auser@domain.com");
+        when(tuple1.getStringByField(ActionInfoFields.IP.fieldName())).thenReturn("100.100.100.100");
+        when(tuple1.getStringByField(ActionInfoFields.ACTION_TYPE.fieldName())).thenReturn("login");
+        when(tuple1.getStringByField(ActionInfoFields.TIMESTAMP.fieldName())).thenReturn("1354547679586");
 
         Tuple tuple2 = mock(Tuple.class);
-        when(tuple2.getStringByField(ActionInfoFields.EMAIL.name())).thenReturn("auser@domain.com");
-        when(tuple2.getStringByField(ActionInfoFields.IP.name())).thenReturn("100.100.100.100");
-        when(tuple2.getStringByField(ActionInfoFields.ACTION_TYPE.name())).thenReturn("login");
-        when(tuple2.getStringByField(ActionInfoFields.TIMESTAMP.name())).thenReturn("1354547689586");
+        when(tuple2.getStringByField(ActionInfoFields.EMAIL.fieldName())).thenReturn("auser@domain.com");
+        when(tuple2.getStringByField(ActionInfoFields.IP.fieldName())).thenReturn("100.100.100.100");
+        when(tuple2.getStringByField(ActionInfoFields.ACTION_TYPE.fieldName())).thenReturn("login");
+        when(tuple2.getStringByField(ActionInfoFields.TIMESTAMP.fieldName())).thenReturn("1354547689586");
 
         bolt.execute(tuple1, collector);
         bolt.execute(tuple2, collector);

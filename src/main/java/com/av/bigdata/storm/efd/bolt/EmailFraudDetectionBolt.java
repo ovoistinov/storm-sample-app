@@ -20,26 +20,24 @@ import com.av.bigdata.storm.efd.domain.ActionInfoFields;
 import com.av.bigdata.storm.efd.domain.ActionType;
 
 public class EmailFraudDetectionBolt extends BaseBasicBolt {
-    static final Logger LOG = LoggerFactory.getLogger(EmailFraudDetectionBolt.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(EmailFraudDetectionBolt.class);
+    private static final long TIME_TOLERANCE_LIMIT = 1000;
+    
     private final String[] outputFields = new String[] {"alert_message"};
     private Map<String, ActionInfo> actionLog = new HashMap<String, ActionInfo>();
+    
+    public EmailFraudDetectionBolt() {}
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
-        LOG.debug("Executing tuple {}", input);
-
         try {
-            String emailAddress = input.getStringByField(ActionInfoFields.EMAIL.name());
-            String ip = input.getStringByField(ActionInfoFields.IP.name());
-
-            String actionTypeValue = input.getStringByField(ActionInfoFields.ACTION_TYPE.name());
-            ActionType action = ActionType.valueOf(actionTypeValue != null ? actionTypeValue.toUpperCase() : "UNKNOWN");
-
-            long timestamp = Long.parseLong(input.getStringByField(ActionInfoFields.TIMESTAMP.name()));
-
-            ActionInfo actionInfo = new ActionInfo(emailAddress, ip, action, timestamp);
-            LOG.debug("Received ActionInfo: {}", actionInfo);
+            String emailAddress = input.getStringByField(ActionInfoFields.EMAIL.fieldName());
+            String ip = input.getStringByField(ActionInfoFields.IP.fieldName());
+            long timestamp = Long.parseLong(input.getStringByField(ActionInfoFields.TIMESTAMP.fieldName()));
+            String actionTypeString = input.getStringByField(ActionInfoFields.ACTION_TYPE.fieldName());
+            
+            ActionType actionType = actionTypeString != null ? ActionType.valueOf(actionTypeString.toUpperCase()) : ActionType.UNKNOWN;
+            ActionInfo actionInfo = new ActionInfo(emailAddress, ip, actionType, timestamp);
             
             if (actionInfo != null && detectFraud(actionInfo)) {
                 LOG.debug("Email fraud detected: {}", actionInfo);
@@ -47,6 +45,7 @@ public class EmailFraudDetectionBolt extends BaseBasicBolt {
             }
 
             actionLog.put(actionInfo.getEmailAddress(), actionInfo);
+            LOG.debug("Received ActionInfo: {}", actionInfo);
         }
         catch (Exception e) {
             LOG.warn("ActionInfo object not created, cannot detect fraud.", e);
@@ -56,20 +55,25 @@ public class EmailFraudDetectionBolt extends BaseBasicBolt {
     private boolean detectFraud(ActionInfo actionInfo) {
         final ActionInfo cachedActionInfo = actionLog.get(actionInfo.getEmailAddress());
         
-        if (cachedActionInfo == null) {
+        if (cachedActionInfo == null || actionInfo == null) {
             return false;
         }
         
         return cachedActionInfo != null 
                 && cachedActionInfo.getEmailAddress().equals(actionInfo.getEmailAddress()) 
                 && cachedActionInfo.getActionType() == actionInfo.getActionType() 
-                && !networksMatch(cachedActionInfo.getIp(), actionInfo.getIp());
+                && !networksMatch(cachedActionInfo.getIp(), actionInfo.getIp())
+                && !withinTimeTolerance(cachedActionInfo.getTimestamp(), actionInfo.getTimestamp());
     }
 
     private boolean networksMatch(String ip1, String ip2) {
         return ip1 != null 
                 && ip2 != null 
                 && startsWith(ip1.substring(0, 6)).matches(ip2);
+    }
+    
+    private boolean withinTimeTolerance(long ts1, long ts2) {
+    	return Math.abs(ts2 - ts1) <= TIME_TOLERANCE_LIMIT;
     }
 
     @Override

@@ -17,9 +17,7 @@ import backtype.storm.LocalCluster;
  * @date 30.11.2012
  */
 public class BaseStormIntegrationTest {
-    protected final Logger LOG = LoggerFactory.getLogger(BaseStormIntegrationTest.class); // TODO resolve multiple
-                                                                                          // logger bindings
-
+    protected final Logger LOG = LoggerFactory.getLogger(BaseStormIntegrationTest.class);
     private final String DEFAULT_LOCAL_TEMP_DIR = System.getProperty("java.io.tmpdir");
 
     private Config config;
@@ -28,19 +26,19 @@ public class BaseStormIntegrationTest {
 
     @Before
     public void startUp() throws Exception {
-        StormTestFixtures.prepareLocalTempDir(true);
+        StormTestHelper.prepareLocalTempDir(true);
 
-        topologyName = StormTestFixtures.buildTopologyName();
+        topologyName = StormTestHelper.buildTopologyName();
         LOG.debug("Topology name is {}", topologyName);
 
-        StormTestFixtures.buildConfig();
+        this.config = StormTestHelper.buildConfig();
         cluster = new LocalCluster();
     }
 
     @After
     public void tearDown() {
         System.setProperty("java.io.tmpdir", DEFAULT_LOCAL_TEMP_DIR);
-        StormTestFixtures.shutdownLocalCluster(getLocalCluster(), getTopologyName());
+        StormTestHelper.shutdownLocalCluster(getLocalCluster(), getTopologyName());
     }
 
     protected LocalCluster getLocalCluster() {

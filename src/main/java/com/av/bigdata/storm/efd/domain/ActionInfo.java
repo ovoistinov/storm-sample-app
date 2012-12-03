@@ -1,7 +1,5 @@
 package com.av.bigdata.storm.efd.domain;
 
-import java.net.InetAddress;
-
 public class ActionInfo {
     private String emailAddress;
     private String ip;
